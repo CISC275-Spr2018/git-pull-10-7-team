@@ -13,15 +13,19 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-
+import javax.swing.KeyStroke;
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 
 public class View extends JPanel {
 
@@ -63,6 +67,7 @@ public class View extends JPanel {
     	frame.setBackground(Color.gray);
     	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     	frame.setSize(frameWidth, frameHeight);
+    	
     	frame.setVisible(true);
     	System.out.println("initialized View");
 
@@ -125,6 +130,87 @@ public class View extends JPanel {
     	panel.add(rightCB);
     	panel.add(upCB);
     	panel.add(downCB);
+    	
+    	//Keyboard Input
+    	//Left Arrow
+    	panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("LEFT"), "leftPressed");
+    	panel.getActionMap().put("leftPressed", new AbstractAction(){
+    		@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(rightCB.isSelected()){
+					rightCB.setSelected(false);
+				}
+				leftCB.setSelected(true);
+			}
+    	});
+    	
+    	panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("released LEFT"), "leftReleased");
+    	panel.getActionMap().put("leftReleased", new AbstractAction(){
+    		@Override
+			public void actionPerformed(ActionEvent arg0) {
+				leftCB.setSelected(false);
+			}
+    	});
+    	
+    	//Right Arrow
+    	panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("RIGHT"), "rightPressed");
+    	panel.getActionMap().put("rightPressed", new AbstractAction(){
+    		@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(leftCB.isSelected()){
+					leftCB.setSelected(false);
+				}
+				rightCB.setSelected(true);
+			}
+    	});
+    	
+    	panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("released RIGHT"), "rightReleased");
+    	panel.getActionMap().put("rightReleased", new AbstractAction(){
+    		@Override
+			public void actionPerformed(ActionEvent arg0) {
+				rightCB.setSelected(false);
+			}
+    	});
+    	
+    	//Up Arrow
+    	panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("UP"), "upPressed");
+    	panel.getActionMap().put("upPressed", new AbstractAction(){
+    		@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(downCB.isSelected()){
+					downCB.setSelected(false);
+				}
+				upCB.setSelected(true);
+			}
+    	});
+    	
+    	panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("released UP"), "upReleased");
+    	panel.getActionMap().put("upReleased", new AbstractAction(){
+    		@Override
+			public void actionPerformed(ActionEvent arg0) {
+				upCB.setSelected(false);
+			}
+    	});
+    	
+    	//Down Arrow
+    	panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DOWN"), "downPressed");
+    	panel.getActionMap().put("downPressed", new AbstractAction(){
+    		@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(upCB.isSelected()){
+					upCB.setSelected(false);
+				}
+				downCB.setSelected(true);
+			}
+    	});
+    	
+    	panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("released DOWN"), "downReleased");
+    	panel.getActionMap().put("downReleased", new AbstractAction(){
+    		@Override
+			public void actionPerformed(ActionEvent arg0) {
+				downCB.setSelected(false);
+			}
+    	});
     }
 
     @Override
