@@ -36,7 +36,7 @@ public class Model {
     }
 
 
-    public void updateLocationAndDirection(boolean lBtn, boolean rBtn, boolean uBtn, boolean dBtn) {
+    public void updateLocationAndDirection(boolean lBtn, boolean rBtn, boolean uBtn, boolean dBtn, boolean firing) {
     	try {
     		Thread.sleep(30);
     	} catch (InterruptedException e) {
@@ -69,10 +69,12 @@ public class Model {
         	yMoving = dBtn || uBtn ? true : false;
     	}
     	
-    	if(xMoving)
-    		xloc += right ? xIncr : -xIncr;
-    	if(yMoving)
-    		yloc += down ? yIncr : -yIncr;
+    	if(!firing){
+    		if(xMoving)
+    			xloc += right ? xIncr : -xIncr;
+    		if(yMoving)
+    			yloc += down ? yIncr : -yIncr;
+    	}
     }
 
     

@@ -29,7 +29,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 
-public class View extends JPanel implements KeyListener {
+public class View extends JPanel{
 
     static JFrame frame;
     static JFrame b_frame;
@@ -38,13 +38,12 @@ public class View extends JPanel implements KeyListener {
     static JCheckBox leftCB;
     static JCheckBox upCB;
     static JCheckBox downCB;
-    static JTextField keyText = new JTextField(80);
-    static boolean fire = false;
     final static int imgWidth = 165;
     final static int imgHeight = 165;
     final int frameCount = 10;
     final int pngCount = 8;
     final int fireFC = 4;
+    int fcNum = 0;
     static int buttonWidth = 120;
     static int buttonHeight = 30;
     static int panelHeight = 40;
@@ -61,6 +60,7 @@ public class View extends JPanel implements KeyListener {
     int hold_x;
     int hold_y;
     boolean isUpdating = true;
+    boolean isFiring = false;
 
     BufferedImage[][] pics = new BufferedImage[pngCount][frameCount];//[dir][frame]
     BufferedImage[][] firepics = new BufferedImage[pngCount][fireFC];
@@ -69,11 +69,6 @@ public class View extends JPanel implements KeyListener {
     public View() {
     	loadImages();
 
-    	keyText.addKeyListener(this);
-    	BorderLayout layout = new BorderLayout();
-    	setLayout(layout);
-    	add(keyText, BorderLayout.NORTH);
-    	
     	frame = new JFrame();
     	frame.getContentPane().add(this);
     	frame.setBackground(Color.gray);
@@ -223,51 +218,34 @@ public class View extends JPanel implements KeyListener {
 				downCB.setSelected(false);
 			}
     	});
+    	
+    	//Fire Key (F)
+    	panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke('f'), "Fire");
+    	panel.getActionMap().put("Fire", new AbstractAction(){
+    		@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(!isFiring)
+					isFiring = true;
+			}
+    	});
+    	
     }
-
-    
-    @Override
-    public void keyPressed(KeyEvent e) {
-    	int keyCode = e.getKeyCode();
-    	if (keyCode == KeyEvent.VK_F) {
-    		fire = true;
-    		System.out.println("'Fire' key is pressed.");
-    	}
-    }
-    
-    @Override
-	public void keyReleased(KeyEvent e) {
-		int keyCode = e.getKeyCode();
-		if (keyCode == KeyEvent.VK_F) {
-			fire = false;
-			System.out.println("'Fire' key is released.");
-		}
-	}
-    
-    @Override
-	public void keyTyped(KeyEvent e) {
-		// Not needed
-	}
     
     @Override
     public void paint(Graphics g) {
     	picNum += 1;
-    	if (fire == false) {
+    	if (!isFiring) {
     		g.drawImage(pics[heading.ordinal()][picNum % frameCount], xloc, yloc, Color.gray, this);
     	}
     	else {
-    		g.drawImage(firepics[fireheading.ordinal()][picNum % fireFC], xloc, yloc, Color.gray, this);
+    		g.drawImage(firepics[fireheading.ordinal()][fcNum++ % fireFC], xloc, yloc, Color.gray, this);
+    		if(fcNum % fireFC == 0)
+    			isFiring = false;
     	}
     }
 
-    public void update(int xloc, int yloc, Direction dir) {
+    public void update(int xloc, int yloc, Direction dir, Firedir firedir) {
     	this.heading = dir;
-    	this.xloc = xloc;
-    	this.yloc = yloc;
-    	this.frame.repaint();
-    }
-    
-    public void updatefire(int xloc, int yloc, Firedir firedir) {
     	this.fireheading = firedir;
     	this.xloc = xloc;
     	this.yloc = yloc;
@@ -334,6 +312,9 @@ public class View extends JPanel implements KeyListener {
     }
     public boolean isDownCBSelected(){
     	return downCB.isSelected();
+    }
+    public boolean isFiring(){
+    	return isFiring;
     }
     
 }
