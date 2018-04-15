@@ -33,6 +33,7 @@ public class Controller{
     		model.updateLocationAndDirection(view.isLeftCBSelected(), view.isRightCBSelected(), view.isUpCBSelected(), view.isDownCBSelected());
     		//update the view
     		view.update(model.getX(), model.getY(), model.getDirect());
+    		view.updatefire(model.getX(), model.getY(), model.getFireDirect());
     	}
     }
 

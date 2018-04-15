@@ -8,6 +8,7 @@
  * [x] load images for all direction (an image should only be loaded once!!! why?)
  **/
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -21,13 +22,14 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 
-public class View extends JPanel {
+public class View extends JPanel implements KeyListener {
 
     static JFrame frame;
     static JFrame b_frame;
@@ -36,10 +38,13 @@ public class View extends JPanel {
     static JCheckBox leftCB;
     static JCheckBox upCB;
     static JCheckBox downCB;
+    static JTextField keyText = new JTextField(80);
+    static boolean fire = false;
     final static int imgWidth = 165;
     final static int imgHeight = 165;
     final int frameCount = 10;
     final int pngCount = 8;
+    final int fireFC = 4;
     static int buttonWidth = 120;
     static int buttonHeight = 30;
     static int panelHeight = 40;
@@ -50,6 +55,7 @@ public class View extends JPanel {
     int picNum = 0;
     Direction heading;
     Direction heading_hold;
+    Firedir fireheading;
     int xloc;
     int yloc;
     int hold_x;
@@ -57,11 +63,17 @@ public class View extends JPanel {
     boolean isUpdating = true;
 
     BufferedImage[][] pics = new BufferedImage[pngCount][frameCount];//[dir][frame]
+    BufferedImage[][] firepics = new BufferedImage[pngCount][fireFC];
 
     //set dimensions and load all images on init
     public View() {
     	loadImages();
 
+    	keyText.addKeyListener(this);
+    	BorderLayout layout = new BorderLayout();
+    	setLayout(layout);
+    	add(keyText, BorderLayout.NORTH);
+    	
     	frame = new JFrame();
     	frame.getContentPane().add(this);
     	frame.setBackground(Color.gray);
@@ -213,14 +225,50 @@ public class View extends JPanel {
     	});
     }
 
+    
+    @Override
+    public void keyPressed(KeyEvent e) {
+    	int keyCode = e.getKeyCode();
+    	if (keyCode == KeyEvent.VK_F) {
+    		fire = true;
+    		System.out.println("'Fire' key is pressed.");
+    	}
+    }
+    
+    @Override
+	public void keyReleased(KeyEvent e) {
+		int keyCode = e.getKeyCode();
+		if (keyCode == KeyEvent.VK_F) {
+			fire = false;
+			System.out.println("'Fire' key is released.");
+		}
+	}
+    
+    @Override
+	public void keyTyped(KeyEvent e) {
+		// Not needed
+	}
+    
     @Override
     public void paint(Graphics g) {
     	picNum += 1;
-    	g.drawImage(pics[heading.ordinal()][picNum % frameCount], xloc, yloc, Color.gray, this);
+    	if (fire == false) {
+    		g.drawImage(pics[heading.ordinal()][picNum % frameCount], xloc, yloc, Color.gray, this);
+    	}
+    	else {
+    		g.drawImage(firepics[fireheading.ordinal()][picNum % fireFC], xloc, yloc, Color.gray, this);
+    	}
     }
 
     public void update(int xloc, int yloc, Direction dir) {
     	this.heading = dir;
+    	this.xloc = xloc;
+    	this.yloc = yloc;
+    	this.frame.repaint();
+    }
+    
+    public void updatefire(int xloc, int yloc, Firedir firedir) {
+    	this.fireheading = firedir;
     	this.xloc = xloc;
     	this.yloc = yloc;
     	this.frame.repaint();
@@ -234,6 +282,14 @@ public class View extends JPanel {
 
     		for(int i = 0; i < frameCount; i++)
     			pics[dir.ordinal()][i] = img.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
+    	}
+    	for (Firedir fdir : Firedir.values()) {
+    		BufferedImage img = createImage(fdir.getName());
+    		firepics[fdir.ordinal()] = new BufferedImage[4];
+    		
+    		for (int i = 0; i < fireFC; i++) {
+    			firepics[fdir.ordinal()][i] = img.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
+    		}
     	}
     }
 
@@ -279,4 +335,5 @@ public class View extends JPanel {
     public boolean isDownCBSelected(){
     	return downCB.isSelected();
     }
+    
 }
