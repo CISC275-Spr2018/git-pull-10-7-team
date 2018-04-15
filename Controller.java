@@ -3,7 +3,6 @@ import javax.swing.Timer;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class Controller{
 
