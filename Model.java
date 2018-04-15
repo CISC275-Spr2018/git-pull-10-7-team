@@ -24,6 +24,7 @@ public class Model {
     boolean xMoving;
     boolean yMoving;
     Direction dir = Direction.SOUTHEAST;
+    Firedir firedir = Firedir.FIRESOUTHWEST;
 
     public Model(int width, int height, int imgWidth, int imgHeight) {
     	this.frameWidth = width;
@@ -35,14 +36,12 @@ public class Model {
     }
 
 
-    public void updateLocationAndDirection(boolean lBtn, boolean rBtn, boolean uBtn, boolean dBtn) {
+    public void updateLocationAndDirection(boolean lBtn, boolean rBtn, boolean uBtn, boolean dBtn, boolean firing) {
     	try {
     		Thread.sleep(30);
     	} catch (InterruptedException e) {
     		e.printStackTrace();
     	}
-
-    	System.out.println("updating pos");
     	
     	if(frameWidth - xloc - charWidth < 0 && rBtn){
     		right = false;
@@ -70,10 +69,12 @@ public class Model {
         	yMoving = dBtn || uBtn ? true : false;
     	}
     	
-    	if(xMoving)
-    		xloc += right ? xIncr : -xIncr;
-    	if(yMoving)
-    		yloc += down ? yIncr : -yIncr;
+    	if(!firing){
+    		if(xMoving)
+    			xloc += right ? xIncr : -xIncr;
+    		if(yMoving)
+    			yloc += down ? yIncr : -yIncr;
+    	}
     }
 
     
@@ -96,7 +97,27 @@ public class Model {
     		dir = down ? Direction.SOUTH : Direction.NORTH;
     	}
     	return dir;
-    }    
+    }   
+    
+    public Firedir getFireDirect() {
+    	if(xMoving && yMoving){
+    		if(right && down)
+    			firedir = Firedir.FIRESOUTHEAST;
+    		else if(right && !down)
+    			firedir = Firedir.FIRENORTHEAST;
+    		else if(!right && down)
+    			firedir = Firedir.FIRESOUTHWEST;
+    		else
+    			firedir = Firedir.FIRENORTHWEST;
+    	}
+    	else if(xMoving){
+    		firedir = right ? Firedir.FIREEAST : Firedir.FIREWEST;
+    	}
+    	else if(yMoving){
+    		firedir = down ? Firedir.FIRESOUTH : Firedir.FIRENORTH;
+    	}
+    	return firedir;
+    } 
 
     public int getX() {
     	return this.xloc;

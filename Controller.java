@@ -3,7 +3,6 @@ import javax.swing.Timer;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class Controller{
 
@@ -30,9 +29,9 @@ public class Controller{
     public void animate() {
     	if(view.isUpdating()){
     		//increment the x and y coordinates, alter direction if necessary
-    		model.updateLocationAndDirection(view.isLeftCBSelected(), view.isRightCBSelected(), view.isUpCBSelected(), view.isDownCBSelected());
+    		model.updateLocationAndDirection(view.isLeftCBSelected(), view.isRightCBSelected(), view.isUpCBSelected(), view.isDownCBSelected(), view.isFiring());
     		//update the view
-    		view.update(model.getX(), model.getY(), model.getDirect());
+    		view.update(model.getX(), model.getY(), model.getDirect(), model.getFireDirect());
     	}
     }
 

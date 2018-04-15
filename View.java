@@ -13,8 +13,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -25,9 +23,8 @@ import javax.swing.KeyStroke;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 
-public class View extends JPanel {
+public class View extends JPanel{
 
     static JFrame frame;
     static JFrame b_frame;
@@ -40,6 +37,8 @@ public class View extends JPanel {
     final static int imgHeight = 165;
     final int frameCount = 10;
     final int pngCount = 8;
+    final int fireFC = 4;
+    int fcNum = 0;
     static int buttonWidth = 120;
     static int buttonHeight = 30;
     static int panelHeight = 40;
@@ -50,13 +49,16 @@ public class View extends JPanel {
     int picNum = 0;
     Direction heading;
     Direction heading_hold;
+    Firedir fireheading;
     int xloc;
     int yloc;
     int hold_x;
     int hold_y;
     boolean isUpdating = true;
+    boolean isFiring = false;
 
     BufferedImage[][] pics = new BufferedImage[pngCount][frameCount];//[dir][frame]
+    BufferedImage[][] firepics = new BufferedImage[pngCount][fireFC];
 
     //set dimensions and load all images on init
     public View() {
@@ -211,16 +213,35 @@ public class View extends JPanel {
 				downCB.setSelected(false);
 			}
     	});
+    	
+    	//Fire Key (F)
+    	panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke('f'), "Fire");
+    	panel.getActionMap().put("Fire", new AbstractAction(){
+    		@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(!isFiring)
+					isFiring = true;
+			}
+    	});
+    	
     }
-
+    
     @Override
     public void paint(Graphics g) {
     	picNum += 1;
-    	g.drawImage(pics[heading.ordinal()][picNum % frameCount], xloc, yloc, Color.gray, this);
+    	if (!isFiring) {
+    		g.drawImage(pics[heading.ordinal()][picNum % frameCount], xloc, yloc, Color.gray, this);
+    	}
+    	else {
+    		g.drawImage(firepics[fireheading.ordinal()][fcNum++ % fireFC], xloc, yloc, Color.gray, this);
+    		if(fcNum % fireFC == 0)
+    			isFiring = false;
+    	}
     }
 
-    public void update(int xloc, int yloc, Direction dir) {
+    public void update(int xloc, int yloc, Direction dir, Firedir firedir) {
     	this.heading = dir;
+    	this.fireheading = firedir;
     	this.xloc = xloc;
     	this.yloc = yloc;
     	this.frame.repaint();
@@ -234,6 +255,14 @@ public class View extends JPanel {
 
     		for(int i = 0; i < frameCount; i++)
     			pics[dir.ordinal()][i] = img.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
+    	}
+    	for (Firedir fdir : Firedir.values()) {
+    		BufferedImage img = createImage(fdir.getName());
+    		firepics[fdir.ordinal()] = new BufferedImage[4];
+    		
+    		for (int i = 0; i < fireFC; i++) {
+    			firepics[fdir.ordinal()][i] = img.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
+    		}
     	}
     }
 
@@ -279,4 +308,8 @@ public class View extends JPanel {
     public boolean isDownCBSelected(){
     	return downCB.isSelected();
     }
+    public boolean isFiring(){
+    	return isFiring;
+    }
+    
 }
