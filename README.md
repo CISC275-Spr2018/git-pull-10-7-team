@@ -13,7 +13,7 @@
 
 ### Michael Ly - (lymike)
 #### Contribution:
-* Refined JButton controls and logic
+* Implemented "Fire" key
 
 ### Brian Phillips - (bphillip)
 #### Contribution:
