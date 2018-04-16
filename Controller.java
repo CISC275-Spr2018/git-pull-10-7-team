@@ -28,10 +28,10 @@ public class Controller{
     //run the simulation
     public void animate() {
     	if(view.isUpdating()){
-    		//increment the x and y coordinates, alter direction if necessary
-    		model.updateLocationAndDirection(view.isLeftCBSelected(), view.isRightCBSelected(), view.isUpCBSelected(), view.isDownCBSelected(), view.isFiring());
-    		//update the view
-    		view.update(model.getX(), model.getY(), model.getDirect(), model.getFireDirect());
+	    //increment the x and y coordinates, alter direction if necessary
+	    model.updateLocationAndDirection(view.isLeftCBSelected(), view.isRightCBSelected(), view.isUpCBSelected(), view.isDownCBSelected(), view.isFiring(), view.isJumping());
+	    //update the view
+	    view.update(model.getX(), model.getY(), model.getDirect(), model.getFireDirect(), model.getJumpDirect());
     	}
     }
 

@@ -25,7 +25,8 @@ public class Model {
     boolean yMoving;
     Direction dir = Direction.SOUTHEAST;
     Firedir firedir = Firedir.FIRESOUTHWEST;
-
+    Jumpdir jumpdir = Jumpdir.JUMPSOUTHWEST;
+    
     public Model(int width, int height, int imgWidth, int imgHeight) {
     	this.frameWidth = width;
     	this.frameHeight = height;
@@ -36,7 +37,7 @@ public class Model {
     }
 
 
-    public void updateLocationAndDirection(boolean lBtn, boolean rBtn, boolean uBtn, boolean dBtn, boolean firing) {
+    public void updateLocationAndDirection(boolean lBtn, boolean rBtn, boolean uBtn, boolean dBtn, boolean firing, boolean jumping) {
     	try {
     		Thread.sleep(30);
     	} catch (InterruptedException e) {
@@ -69,7 +70,7 @@ public class Model {
         	yMoving = dBtn || uBtn ? true : false;
     	}
     	
-    	if(!firing){
+    	if(!firing && !jumping){
     		if(xMoving)
     			xloc += right ? xIncr : -xIncr;
     		if(yMoving)
@@ -99,6 +100,25 @@ public class Model {
     	return dir;
     }   
     
+    public Jumpdir getJumpDirect() {
+    	if(xMoving && yMoving){
+    		if(right && down)
+    			jumpdir = Jumpdir.JUMPSOUTHEAST;
+    		else if(right && !down)
+    			jumpdir = Jumpdir.JUMPNORTHEAST;
+    		else if(!right && down)
+    			jumpdir = Jumpdir.JUMPSOUTHWEST;
+    		else
+    			jumpdir = Jumpdir.JUMPNORTHWEST;
+    	}
+    	else if(xMoving){
+    		jumpdir = right ? Jumpdir.JUMPEAST : Jumpdir.JUMPWEST;
+    	}
+    	else if(yMoving){
+    		jumpdir = down ? Jumpdir.JUMPSOUTH : Jumpdir.JUMPNORTH;
+    	}
+    	return jumpdir;
+    }     
     public Firedir getFireDirect() {
     	if(xMoving && yMoving){
     		if(right && down)

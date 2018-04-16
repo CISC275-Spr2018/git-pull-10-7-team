@@ -1,11 +1,11 @@
-# Team 10-7
+# Team 10-7 - LAB 8
 
 ## Team members:
 
 
 ### Calvin Banning - (cbanning)
 #### Contribution:
-* Integrated Animation4Thread and adjusted original MVC code
+* Added jumping and some overall refactoring
 
 ### Ryan Gallamoza - (ryang)
 #### Contribution:

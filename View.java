@@ -50,16 +50,19 @@ public class View extends JPanel{
     Direction heading;
     Direction heading_hold;
     Firedir fireheading;
+    Jumpdir jumpheading;
     int xloc;
     int yloc;
     int hold_x;
     int hold_y;
     boolean isUpdating = true;
     boolean isFiring = false;
-
+    boolean isJumping = false;
+    
     BufferedImage[][] pics = new BufferedImage[pngCount][frameCount];//[dir][frame]
     BufferedImage[][] firepics = new BufferedImage[pngCount][fireFC];
-
+    BufferedImage[][] jumppics = new BufferedImage[pngCount][fireFC];
+    
     //set dimensions and load all images on init
     public View() {
     	loadImages();
@@ -223,25 +226,42 @@ public class View extends JPanel{
 					isFiring = true;
 			}
     	});
+
+	//Jump Key (J)
+    	panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke('j'), "Jump");
+    	panel.getActionMap().put("Jump", new AbstractAction(){
+    		@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(!isJumping)
+					isJumping = true;
+			}
+    	});
+	
     	
     }
     
     @Override
     public void paint(Graphics g) {
     	picNum += 1;
-    	if (!isFiring) {
-    		g.drawImage(pics[heading.ordinal()][picNum % frameCount], xloc, yloc, Color.gray, this);
+    	if (!isFiring && !isJumping) {
+	    g.drawImage(pics[heading.ordinal()][picNum % frameCount], xloc, yloc, Color.gray, this);
     	}
+	else if (!isFiring) {
+	    g.drawImage(jumppics[fireheading.ordinal()][fcNum++ % fireFC], xloc, yloc, Color.gray, this);
+	    if(fcNum % fireFC == 0)
+		isJumping = false;
+	}
     	else {
-    		g.drawImage(firepics[fireheading.ordinal()][fcNum++ % fireFC], xloc, yloc, Color.gray, this);
-    		if(fcNum % fireFC == 0)
-    			isFiring = false;
+	    g.drawImage(firepics[fireheading.ordinal()][fcNum++ % fireFC], xloc, yloc, Color.gray, this);
+	    if(fcNum % fireFC == 0)
+		isFiring = false;
     	}
     }
 
-    public void update(int xloc, int yloc, Direction dir, Firedir firedir) {
+    public void update(int xloc, int yloc, Direction dir, Firedir firedir, Jumpdir jumpdir) {
     	this.heading = dir;
     	this.fireheading = firedir;
+	this.jumpheading = jumpdir;
     	this.xloc = xloc;
     	this.yloc = yloc;
     	this.frame.repaint();
@@ -262,6 +282,14 @@ public class View extends JPanel{
     		
     		for (int i = 0; i < fireFC; i++) {
     			firepics[fdir.ordinal()][i] = img.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
+    		}
+    	}
+	for (Jumpdir jdir : Jumpdir.values()) {
+    		BufferedImage img = createImage(jdir.getName());
+    		jumppics[jdir.ordinal()] = new BufferedImage[4];
+    		
+    		for (int i = 0; i < fireFC; i++) {
+    			jumppics[jdir.ordinal()][i] = img.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
     		}
     	}
     }
@@ -311,5 +339,7 @@ public class View extends JPanel{
     public boolean isFiring(){
     	return isFiring;
     }
-    
+    public boolean isJumping(){
+	return isJumping;
+    }
 }
