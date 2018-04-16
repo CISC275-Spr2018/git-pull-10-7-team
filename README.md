@@ -29,3 +29,7 @@
 javac *.java
 java Controller
 ```
+## Controls:
+f- fire
+j- jump
+arrows - movement
