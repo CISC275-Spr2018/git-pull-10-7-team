@@ -38,7 +38,9 @@ public class View extends JPanel{
     final int frameCount = 10;
     final int pngCount = 8;
     final int fireFC = 4;
-    int fcNum = 0;
+    int firePicNum = 0;
+    final int jumpFC = 8;
+    int jumpPicNum = 0;
     static int buttonWidth = 120;
     static int buttonHeight = 30;
     static int panelHeight = 40;
@@ -56,9 +58,11 @@ public class View extends JPanel{
     int hold_y;
     boolean isUpdating = true;
     boolean isFiring = false;
+    boolean isJumping = false;
 
     BufferedImage[][] pics = new BufferedImage[pngCount][frameCount];//[dir][frame]
     BufferedImage[][] firepics = new BufferedImage[pngCount][fireFC];
+    BufferedImage[][] jumppics = new BufferedImage[pngCount][jumpFC];
 
     //set dimensions and load all images on init
     public View() {
@@ -219,8 +223,18 @@ public class View extends JPanel{
     	panel.getActionMap().put("Fire", new AbstractAction(){
     		@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if(!isFiring)
+				if(!isFiring && !isJumping)
 					isFiring = true;
+			}
+    	});
+    	
+    	//Jump Key (J)
+    	panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke('j'), "Jump");
+    	panel.getActionMap().put("Jump", new AbstractAction(){
+    		@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(!isFiring && !isJumping)
+					isJumping = true;
 			}
     	});
     	
@@ -228,20 +242,23 @@ public class View extends JPanel{
     
     @Override
     public void paint(Graphics g) {
-    	picNum += 1;
-    	if (!isFiring) {
-    		g.drawImage(pics[heading.ordinal()][picNum % frameCount], xloc, yloc, Color.gray, this);
+    	if (isFiring) {
+    		g.drawImage(firepics[heading.ordinal()][firePicNum++ % fireFC], xloc, yloc, Color.gray, this);
+    		if(firePicNum % fireFC == 0)
+    			isFiring = false;
+    	}
+    	else if (isJumping){
+    		g.drawImage(jumppics[heading.ordinal()][jumpPicNum++ % jumpFC], xloc, yloc, Color.gray, this);
+    		if(jumpPicNum % jumpFC == 0)
+    			isJumping = false;
     	}
     	else {
-    		g.drawImage(firepics[fireheading.ordinal()][fcNum++ % fireFC], xloc, yloc, Color.gray, this);
-    		if(fcNum % fireFC == 0)
-    			isFiring = false;
+    		g.drawImage(pics[heading.ordinal()][picNum++ % frameCount], xloc, yloc, Color.gray, this);
     	}
     }
 
-    public void update(int xloc, int yloc, Direction dir, Firedir firedir) {
+    public void update(int xloc, int yloc, Direction dir) {
     	this.heading = dir;
-    	this.fireheading = firedir;
     	this.xloc = xloc;
     	this.yloc = yloc;
     	this.frame.repaint();
@@ -251,17 +268,25 @@ public class View extends JPanel{
     	//for each direction
     	for (Direction dir : Direction.values()) {	    
     		BufferedImage img = createImage(dir.getName());
-    		pics[dir.ordinal()] = new BufferedImage[10];
+    		pics[dir.ordinal()] = new BufferedImage[frameCount];
 
     		for(int i = 0; i < frameCount; i++)
     			pics[dir.ordinal()][i] = img.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
     	}
     	for (Firedir fdir : Firedir.values()) {
     		BufferedImage img = createImage(fdir.getName());
-    		firepics[fdir.ordinal()] = new BufferedImage[4];
+    		firepics[fdir.ordinal()] = new BufferedImage[fireFC];
     		
     		for (int i = 0; i < fireFC; i++) {
     			firepics[fdir.ordinal()][i] = img.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
+    		}
+    	}
+    	for (Jumpdir jdir : Jumpdir.values()) {
+    		BufferedImage img = createImage(jdir.getName());
+    		jumppics[jdir.ordinal()] = new BufferedImage[jumpFC];
+    		
+    		for (int i = 0; i < jumpFC; i++) {
+    			jumppics[jdir.ordinal()][i] = img.getSubimage(imgWidth*i, 0, imgWidth, imgHeight);
     		}
     	}
     }

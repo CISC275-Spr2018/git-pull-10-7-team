@@ -31,7 +31,7 @@ public class Controller{
     		//increment the x and y coordinates, alter direction if necessary
     		model.updateLocationAndDirection(view.isLeftCBSelected(), view.isRightCBSelected(), view.isUpCBSelected(), view.isDownCBSelected(), view.isFiring());
     		//update the view
-    		view.update(model.getX(), model.getY(), model.getDirect(), model.getFireDirect());
+    		view.update(model.getX(), model.getY(), model.getDirect());
     	}
     }
 

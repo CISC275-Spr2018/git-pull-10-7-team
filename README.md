@@ -5,23 +5,23 @@
 
 ### Calvin Banning - (cbanning)
 #### Contribution:
-* Integrated Animation4Thread and adjusted original MVC code
+* Implemented "Jump" key and enum
 
 ### Ryan Gallamoza - (ryang)
 #### Contribution:
-* Implemented JCheckButtons and adjusted logic
+* Implemented movement keys, assisted with logic
 
 ### Michael Ly - (lymike)
 #### Contribution:
-* Implemented "Fire" key
+* Implemented "Fire" key and enum
 
 ### Brian Phillips - (bphillip)
 #### Contribution:
-* Implemented JButton and Panel and first draft of Button Logic
+* Worked on loading fire and jump images & some movement logic
 
 ### Jacob Petit De Mange - (jakepdm)
 #### Contribution:
-* Assisted in integrating Animation4Thread
+* Worked on painting/drawing logic
 
 
 ## How to run:
